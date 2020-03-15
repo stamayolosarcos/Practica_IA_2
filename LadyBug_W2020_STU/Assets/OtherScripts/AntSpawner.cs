@@ -8,7 +8,7 @@ public class AntSpawner : MonoBehaviour {
     float seedAverage = 0.8f;
     float average;
 
-    public float timeToSpawn = 15f;
+    [Range(5, 25)] public float timeToSpawn = 10f;
     public GameObject eggAnt;
     public GameObject seedAnt;
 

@@ -8,31 +8,34 @@ namespace Steerings
 
 		public RotationalPolicy rotationalPolicy = RotationalPolicy.LWYGI;
 		// target-based rotational policies make little sense for this behaviour
-        // (actually there's no "target" attribute)
+		// (actually there's no "target" attribute)
 
 		public Path path; // path being public can be "setted" from the outside... (e.g by pathFeeder)
 		public float wayPointReachedRadius = 1f;
 		public int currentWaypointIndex = 0;
 
-		public override SteeringOutput GetSteering ()
-		{ 
+		public override SteeringOutput GetSteering()
+		{
 			// no KS? get it
-			if (this.ownKS==null) this.ownKS = GetComponent<KinematicState>();
+			if (this.ownKS == null) this.ownKS = GetComponent<KinematicState>();
 
-			SteeringOutput result = PathFollowing.GetSteering (ownKS, path, ref currentWaypointIndex, wayPointReachedRadius);
+			SteeringOutput result = PathFollowing.GetSteering(ownKS, path, ref currentWaypointIndex, wayPointReachedRadius);
 
-			base.applyRotationalPolicy (rotationalPolicy, result, null);
+			base.applyRotationalPolicy(rotationalPolicy, result, null);
 			return result;
 		}
 
-		public static SteeringOutput GetSteering (KinematicState ownKS, Path path, ref int currentWaypointIndex, float wayPointReachedRadius) {
+		public static SteeringOutput GetSteering(KinematicState ownKS, Path path, ref int currentWaypointIndex, float wayPointReachedRadius)
+		{
 			// path shouldn't be neither null nor erroneous
-			if (path == null) {
-				Debug.LogError ("PathFollowing invoked with null path");
+			if (path == null)
+			{
+				Debug.LogError("PathFollowing invoked with null path");
 				return NULL_STEERING;
 			}
-			if (path.error) {
-				Debug.LogError ("PathFollowing invoked with null path");
+			if (path.error)
+			{
+				Debug.LogError("PathFollowing invoked with null path");
 				return NULL_STEERING;
 			}
 
@@ -48,14 +51,14 @@ namespace Steerings
 			if (path.vectorPath.Count == currentWaypointIndex)
 				return NULL_STEERING;
 
-			SURROGATE_TARGET.transform.position = path.vectorPath [currentWaypointIndex];
+			SURROGATE_TARGET.transform.position = path.vectorPath[currentWaypointIndex];
 
-            if (currentWaypointIndex == path.vectorPath.Count - 1)
-                // use arrive for the last waypoint
-                return Arrive.GetSteering(ownKS, SURROGATE_TARGET, wayPointReachedRadius/2, wayPointReachedRadius*2);
-            else 
-			    return Seek.GetSteering(ownKS, SURROGATE_TARGET);
-			
+			if (currentWaypointIndex == path.vectorPath.Count - 1)
+				// use arrive for the last waypoint
+				return Arrive.GetSteering(ownKS, SURROGATE_TARGET, wayPointReachedRadius / 2, wayPointReachedRadius * 2);
+			else
+				return Seek.GetSteering(ownKS, SURROGATE_TARGET);
+
 		}
 	}
 }
